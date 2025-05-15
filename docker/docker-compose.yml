@@ -1,0 +1,15 @@
+services:
+  backend:
+    container_name: fastapi-template
+    build:
+      context: "../"
+      dockerfile: "./docker/Dockerfile.dev"
+    
+    env_file:
+      - "../.env.dev"
+    
+    ports:
+      - "8000:8000"
+    
+    volumes:
+      - "../src/app_name:/app/app_name"
