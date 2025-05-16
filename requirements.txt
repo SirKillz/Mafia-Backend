@@ -3,3 +3,5 @@ httpx
 mangum
 uvicorn
 python-dotenv
+SQLAlchemy
+pymysql
