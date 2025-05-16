@@ -6,10 +6,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from app_name.routes import *
+from mafia_backend.routes import *
 
 # Configure the root Logger
-logger = logging.getLogger("app_logger")
+logger = logging.getLogger("mafia_logger")
 logger.setLevel(logging.INFO)  # Set logging level
 
 # Check if handlers are already set (prevents duplicate logs in AWS Lambda)
