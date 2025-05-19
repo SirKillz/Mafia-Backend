@@ -18,7 +18,7 @@ services:
     container_name: database
     build:
       context: "../"
-      dockerfile: "../docker/Dockerfile.sql"
+      dockerfile: "./docker/Dockerfile.sql"
 
     env_file: 
       - "../.env.dev"

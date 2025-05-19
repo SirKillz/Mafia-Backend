@@ -5,7 +5,7 @@ FROM python:3.12
 WORKDIR /app
 
 # COPY the src folder into the container
-COPY src/app_name /app/app_name/
+COPY src/mafia_backend /app/mafia_backend/
 
 # COPY the Requirements.txt file into the container
 COPY requirements.txt .
@@ -17,4 +17,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "app_name.__main__:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "mafia_backend.__main__:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
