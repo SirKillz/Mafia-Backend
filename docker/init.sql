@@ -49,3 +49,42 @@ CREATE TABLE IF NOT EXISTS game_participants (
   FOREIGN KEY (role_id)   REFERENCES roles(role_id),
   FOREIGN KEY (team_id)   REFERENCES teams(team_id)
 );
+
+INSERT into teams (name)
+VALUES ("Mafia");
+
+INSERT into teams (name)
+VALUES ("Innocent");
+
+INSERT into roles (role_name)
+VALUES ("Innocent");
+
+INSERT into roles (role_name)
+VALUES ("Spy");
+
+INSERT into roles (role_name)
+VALUES ("Medic");
+
+INSERT into roles (role_name)
+VALUES ("Assassin");
+
+INSERT into roles (role_name)
+VALUES ("Attorney");
+
+INSERT into roles (role_name)
+VALUES ("Undercover Cop");
+
+INSERT into roles (role_name)
+VALUES ("Guild Member");
+
+INSERT into roles (role_name)
+VALUES ("Mafia");
+
+INSERT into roles (role_name)
+VALUES ("Mafia Boss");
+
+INSERT into roles (role_name)
+VALUES ("Consigliere");
+
+INSERT into roles (role_name)
+VALUES ("Enforcer");
