@@ -35,6 +35,8 @@ class GameParticipant(Base):
     player_id = Column(Integer, ForeignKey("players.player_id"), primary_key=True)
     role_id = Column(Integer, ForeignKey("roles.role_id"), nullable=False)
     team_id = Column(Integer, ForeignKey("teams.team_id"), nullable=False)
+    days_survived = Column(Integer),
+    nights_survived = Column(Integer),
     survived_full_game = Column(Boolean, default=False)
     successful_spy_checks = Column(Integer)
     spy_check_opportunities = Column(Integer)
