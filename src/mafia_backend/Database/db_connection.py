@@ -17,7 +17,10 @@ class Database:
 
         self.connection_string = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
 
-        self.engine = create_engine(self.connection_string)
-
-        # Create a session factory
-        self.Session = sessionmaker(bind=self.engine, expire_on_commit=False)
+    def get_engine(self):
+        return create_engine(
+            self.connection_string,
+            pool_pre_ping=True,
+            pool_recycle=3600,
+            echo=False
+        )
