@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class PlayerSchema(BaseModel):
     name: str
-    id: int
+    id: str
     role: str
     isAlive: bool
     canPerformAction: bool
@@ -24,11 +24,12 @@ class GamePayload(BaseModel):
     dayCount: int
     nightCount: int
     mafiaKillPower: int
-    previousMedicSave: Optional[int] = None
-    previousEnforcerBlock: Optional[int] = None
-    previousBossSilence: Optional[int] = None
+    initialMafiaKillPower: int
+    previousMedicSave: Optional[str] = None
+    previousEnforcerBlock: Optional[str] = None
+    previousBossSilence: Optional[str] = None
     consiHasChecked: bool
     assassinHasShot: bool
     attorneyHasDefended: bool
-    lastNightRoutine: Optional[str] = None
-    winningTeam: int
+    lastNightRoutine: Optional[dict] = None
+    winningTeam: str
