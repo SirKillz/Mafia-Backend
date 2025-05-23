@@ -15,7 +15,10 @@ async def create_results(payload: GamePayload, api_key: dict = Depends(get_api_k
 
     # Create the game instance in the database
     query_service = QueryService()
-    query_service.create_game(payload)
+    game_id = query_service.create_game(payload)
+
+    # Create the game participants
+    query_service.create_game_participants(game_id, payload.players)
 
 
 
