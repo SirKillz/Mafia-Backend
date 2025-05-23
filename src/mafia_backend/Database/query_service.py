@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import List
+from decimal import Decimal
 
+from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 from .db_connection import Database
@@ -118,6 +120,73 @@ class QueryService(Database):
 
             session.commit()
 
+    def get_player_stats(self, player_id: int) -> dict:
+        """
+        Run a single raw-SQL query to pull all eight stats for one player,
+        and convert any Decimal rates to floats for JSON serialization.
+        """
+        sql = text("""
+            SELECT
+              p.player_id,
+              p.name                                         AS player_name,
+              COUNT(*)                                       AS games_played,
+              SUM(t.name = 'Mafia')                          AS mafia_games,
+              SUM(t.name = 'Innocent')                       AS innocent_games,
+              ROUND(
+                SUM((t.name = 'Mafia') AND g.winning_team = gp.team_id)
+                / NULLIF(SUM(t.name = 'Mafia'), 0)
+              , 2)                                            AS mafia_win_rate,
+              ROUND(
+                SUM((t.name = 'Innocent') AND g.winning_team = gp.team_id)
+                / NULLIF(SUM(t.name = 'Innocent'), 0)
+              , 2)                                            AS innocent_win_rate,
+              CASE
+                WHEN SUM(gp.spy_check_opportunities) > 0
+                THEN ROUND(
+                       SUM(gp.successful_spy_checks)
+                       / SUM(gp.spy_check_opportunities)
+                     , 2)
+              END                                             AS spy_check_rate,
+              CASE
+                WHEN SUM(gp.medic_save_opportunities) > 0
+                THEN ROUND(
+                       SUM(gp.medic_self_saves)
+                       / SUM(gp.medic_save_opportunities)
+                     , 2)
+              END                                             AS medic_self_save_rate,
+              CASE
+                WHEN SUM(gp.medic_save_opportunities) > 0
+                THEN ROUND(
+                       SUM(gp.successful_medic_saves)
+                       / SUM(gp.medic_save_opportunities)
+                     , 2)
+              END                                             AS successful_medic_save_rate,
+              CASE
+                WHEN SUM(gp.assassin_shot_attempts) > 0
+                THEN ROUND(
+                       SUM(gp.successful_assassin_shots)
+                       / SUM(gp.assassin_shot_attempts)
+                     , 2)
+              END                                             AS successful_assassin_shot_rate
+            FROM players p
+            JOIN game_participants gp ON p.player_id = gp.player_id
+            JOIN teams t             ON gp.team_id    = t.team_id
+            JOIN games g             ON gp.game_id    = g.game_id
+            WHERE p.player_id = :player_id
+            GROUP BY p.player_id, p.name
+        """)
+
+        with self.Session() as session:
+            row = session.execute(sql, {"player_id": player_id}).mappings().one_or_none()
+            if not row:
+                raise ValueError(f"No stats found for player_id={player_id}")
+
+            stats = dict(row)
+            # Convert Decimal → float so JSONResponse can serialize
+            for key, val in stats.items():
+                if isinstance(val, Decimal):
+                    stats[key] = float(val)
+            return stats
 
         
         
