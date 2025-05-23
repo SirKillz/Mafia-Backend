@@ -24,8 +24,6 @@ class QueryService(Database):
                 raise ValueError(f"No team found with name {winning_team}")
             return team.team_id
 
-
-
     def create_game(self, game_payload: GamePayload):
         played_at = datetime.now()
         player_count = len(game_payload.players)
@@ -50,5 +48,8 @@ class QueryService(Database):
             session.add(game)
             session.commit()
             return game.game_id
-            
+
+    def get_players(self):
+        with self.Session() as session:
+            return session.query(Player).all()       
 
