@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS game_participants (
   role_id                 INT    NOT NULL,
   team_id                 INT    NOT NULL,
 
-  survived_full_game      TINYINT(1) DEFAULT 0,
   days_survived             INT    DEFAULT NULL,
   nights_survived           INT    DEFAULT NULL,
   successful_spy_checks     INT    DEFAULT NULL,
