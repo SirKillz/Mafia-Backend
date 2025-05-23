@@ -34,5 +34,5 @@ app.add_middleware(
 )
 
 app.include_router(test_router)
-app.include_router(create_router)
+app.include_router(create_results_router)
 app.include_router(players_router)
