@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS roles (
 
 CREATE TABLE IF NOT EXISTS players (
   player_id   INT AUTO_INCREMENT PRIMARY KEY,
-  player_name VARCHAR(256)
+  name VARCHAR(256)
 );
 
 CREATE TABLE IF NOT EXISTS games (
@@ -88,3 +88,24 @@ VALUES ("Consigliere");
 
 INSERT into roles (role_name)
 VALUES ("Enforcer");
+
+INSERT INTO players (name)
+VALUES 
+  ('Nick Killeen'),
+  ('Luke Hecht'),
+  ('Ryan O''Meara'),
+  ('Cole Bateman'),
+  ('Connor Burns'),
+  ('Colin Leschman'),
+  ('Matt Bovard'),
+  ('Mike Bovard'),
+  ('Curt Hasan'),
+  ('Billy Roche'),
+  ('Kyle Norton'),
+  ('Jared Guzzi'),
+  ('Gavin Burns'),
+  ('Jonah Farrar'),
+  ('Aaron Gowaski'),
+  ('Ronaldho Cadenillas'),
+  ('Ryan Everly'),
+  ('Dan Bornstein');

@@ -16,7 +16,7 @@ class Role(Base):
 class Player(Base):
     __tablename__ = "players"
     player_id = Column(Integer, primary_key=True)
-    player_name = Column(String(256))
+    name = Column(String(256))
 
 class Game(Base):
     __tablename__ = "games"
