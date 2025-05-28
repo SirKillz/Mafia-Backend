@@ -189,6 +189,34 @@ class QueryService(Database):
                     stats[key] = float(val)
             return stats
 
-        
+    def get_overall_team_win_rates_raw(self) -> dict:
+        """
+        Return overall Mafia and Innocent win rates via a raw SQL aggregation.
+        """
+        sql = text("""
+            SELECT
+              ROUND(
+                SUM(t.name = 'Mafia') / COUNT(*)
+              , 2) AS mafia_win_rate,
+              ROUND(
+                SUM(t.name = 'Innocent') / COUNT(*)
+              , 2) AS innocent_win_rate
+            FROM games g
+            JOIN teams t
+              ON g.winning_team = t.team_id
+            WHERE g.approved = 1
+        """)
+
+        with self.Session() as session:
+            row = session.execute(sql).mappings().one_or_none()
+            if row is None:
+                return {"mafia_win_rate": None, "innocent_win_rate": None}
+
+            stats = dict(row)
+            # convert any Decimal rates to float
+            for k, v in stats.items():
+                if isinstance(v, Decimal):
+                    stats[k] = float(v)
+            return stats    
         
 

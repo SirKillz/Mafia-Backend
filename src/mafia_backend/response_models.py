@@ -26,3 +26,7 @@ class PlayerStatsSchema(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class GameStatsSchema(BaseModel):
+    mafia_win_rate: float | None
+    innocent_win_rate: float | None
