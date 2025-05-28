@@ -173,6 +173,7 @@ class QueryService(Database):
             JOIN teams t             ON gp.team_id    = t.team_id
             JOIN games g             ON gp.game_id    = g.game_id
             WHERE p.player_id = :player_id
+              AND g.approved = 1
             GROUP BY p.player_id, p.name
         """)
 

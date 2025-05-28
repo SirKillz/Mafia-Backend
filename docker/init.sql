@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS players (
 CREATE TABLE IF NOT EXISTS games (
   game_id          BIGINT      AUTO_INCREMENT PRIMARY KEY,
   played_at        DATETIME    NOT NULL,
+  approved         TINYINT(1)  NOT NULL DEFAULT 0,
   winning_team     INT       NOT NULL,
   player_count     INT,
   mafia_count      INT,

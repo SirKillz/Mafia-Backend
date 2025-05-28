@@ -22,6 +22,7 @@ class Game(Base):
     __tablename__ = "games"
     game_id = Column(BigInteger, primary_key=True)
     played_at = Column(DateTime, nullable=False)
+    approved = Column(Boolean, nullable=False)
     winning_team = Column(Integer, ForeignKey("teams.team_id"), nullable=False)
     player_count = Column(Integer)
     mafia_count = Column(Integer)
