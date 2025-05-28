@@ -219,4 +219,62 @@ class QueryService(Database):
                     stats[k] = float(v)
             return stats    
         
+    def get_average_stat_rates_raw(self) -> dict:
+        """
+        Compute the same average per-player rates via a raw SQL query.
+        """
+        sql = text("""
+            WITH player_rates AS (
+              SELECT
+                gp.player_id,
+                CASE
+                  WHEN SUM(gp.spy_check_opportunities) > 0
+                  THEN SUM(gp.successful_spy_checks)
+                       / SUM(gp.spy_check_opportunities)
+                END AS spy,
+                CASE
+                  WHEN SUM(gp.medic_save_opportunities) > 0
+                  THEN SUM(gp.medic_self_saves)
+                       / SUM(gp.medic_save_opportunities)
+                END AS medic_self,
+                CASE
+                  WHEN SUM(gp.medic_save_opportunities) > 0
+                  THEN SUM(gp.successful_medic_saves)
+                       / SUM(gp.medic_save_opportunities)
+                END AS medic_success,
+                CASE
+                  WHEN SUM(gp.assassin_shot_attempts) > 0
+                  THEN SUM(gp.successful_assassin_shots)
+                       / SUM(gp.assassin_shot_attempts)
+                END AS assassin
+              FROM game_participants gp
+              JOIN games g
+                ON gp.game_id = g.game_id
+              WHERE g.approved = 1
+              GROUP BY gp.player_id
+            )
+            SELECT
+              ROUND(AVG(spy), 2)             AS avg_spy_check_rate,
+              ROUND(AVG(medic_self), 2)      AS avg_medic_self_save_rate,
+              ROUND(AVG(medic_success), 2)   AS avg_successful_medic_save_rate,
+              ROUND(AVG(assassin), 2)        AS avg_successful_assassin_shot_rate
+            FROM player_rates;
+        """)
+
+        with self.Session() as session:
+            row = session.execute(sql).mappings().one_or_none()
+            if row is None:
+                return {
+                  "avg_spy_check_rate": None,
+                  "avg_medic_self_save_rate": None,
+                  "avg_successful_medic_save_rate": None,
+                  "avg_successful_assassin_shot_rate": None
+                }
+
+            result = dict(row)
+            # Cast Decimal → float
+            for k, v in result.items():
+                if isinstance(v, Decimal):
+                    result[k] = float(v)
+            return result
 

@@ -30,3 +30,9 @@ class PlayerStatsSchema(BaseModel):
 class GameStatsSchema(BaseModel):
     mafia_win_rate: float | None
     innocent_win_rate: float | None
+
+class AverageStatsSchema(BaseModel):
+    avg_spy_check_rate: float | None
+    avg_medic_self_save_rate: float | None
+    avg_successful_medic_save_rate: float | None
+    avg_successful_assassin_shot_rate: float | None
