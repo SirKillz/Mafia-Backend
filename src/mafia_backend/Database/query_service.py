@@ -43,6 +43,7 @@ class QueryService(Database):
             game = Game(
                 played_at = played_at,
                 winning_team = winning_team_id,
+                approved = 0,
                 player_count = player_count,
                 mafia_count = mafia_count,
                 mafia_kill_power = game_payload.initialMafiaKillPower,
