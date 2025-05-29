@@ -23,4 +23,7 @@ async def create_results(payload: GamePayload, api_key: dict = Depends(get_api_k
 
 
 
-    return {"message": "Hello World"}
+    return {
+        "message": "Successfully create game",
+        "game_id": game_id
+    }
