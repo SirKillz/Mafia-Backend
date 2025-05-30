@@ -13,3 +13,10 @@ down:
 # Connect to the Database container
 connect-db:
 	docker exec -it database mysql -u root -p
+
+dump-db:  # TAB before the command, as usual
+	@echo Dumping mafia database from container... && \
+	docker exec -i database mysqldump -uroot -padminpass --databases mafia --single-transaction --skip-lock-tables > dump.sql
+
+
+
