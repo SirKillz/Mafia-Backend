@@ -1,15 +1,20 @@
-# Use the public AWS Lambda Python image as the base image
-FROM public.ecr.aws/lambda/python:3.12
+# Python Base Image
+FROM python:3.12
 
-# Copy the Python dependencies file and install the dependencies
+# Set the working directory
+WORKDIR /app
+
+# COPY the src folder into the container
+COPY src/mafia_backend /app/mafia_backend/
+
+# COPY the Requirements.txt file into the container
 COPY requirements.txt .
+
+# Install the dependencies
 RUN pip install -r requirements.txt
 
-# Copy the app module directly into /var/task/
-COPY src/app_name/ /var/task/app_name/
+# Expose the port
+EXPOSE 8000
 
-# Set the working directory to /var/task/
-WORKDIR /var/task/
-
-# Define the command to run the Lambda function handler
-CMD ["app_name.__main__.handler"]
+# Run the application
+CMD ["uvicorn", "mafia_backend.__main__:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
