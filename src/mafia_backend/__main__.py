@@ -39,3 +39,6 @@ app.include_router(players_router)
 app.include_router(player_stats_router)
 app.include_router(game_stats_router)
 app.include_router(average_stats_router)
+
+logger.info("DB host:", os.getenv("DATABASE_HOST"))
+logger.info("ENV:", os.getenv("ENV"))
