@@ -1,26 +1,33 @@
 import os
-
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import URL
 
 class Database:
-
     def __init__(self):
-        DATABASE_USER = os.getenv("DATABASE_USERNAME")
-        DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-        DATABASE_HOST = os.getenv("DATABASE_HOST")
-        DATABASE_PORT = os.getenv("DATABASE_PORT")
-        DATABASE_NAME = os.getenv("DATABASE_NAME")
+        user = os.getenv("DATABASE_USERNAME")
+        password = os.getenv("DATABASE_PASSWORD")
+        host = os.getenv("DATABASE_HOST")
+        port = int(os.getenv("DATABASE_PORT", "3306"))
+        name = os.getenv("DATABASE_NAME")
 
-        if os.environ['ENV'] == 'test':
-            DATABASE_HOST = "localhost"
+        # don't override host for prod
+        if os.getenv("ENV") == "test":
+            host = "localhost"
 
-        self.connection_string = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}"
+        self.url = URL.create(
+            "mysql+pymysql",
+            username=user,
+            password=password,  # raw password; URL.create escapes it correctly
+            host=host,
+            port=port,
+            database=name,
+            query={"charset": "utf8mb4"},
+        )
 
     def get_engine(self):
         return create_engine(
-            self.connection_string,
+            self.url,
             pool_pre_ping=True,
             pool_recycle=3600,
-            echo=False
+            echo=False,
         )
