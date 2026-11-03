@@ -43,7 +43,7 @@ class QueryService(Database):
             game = Game(
                 played_at = played_at,
                 winning_team = winning_team_id,
-                approved = 0,
+                approved = False,
                 player_count = player_count,
                 mafia_count = mafia_count,
                 mafia_kill_power = game_payload.initialMafiaKillPower,
@@ -136,50 +136,50 @@ class QueryService(Database):
               COUNT(*)                                       AS games_played,
 
               -- role-specific game counts
-              SUM(r.role_name = 'Spy')                       AS spy_games_played,
-              SUM(r.role_name = 'Medic')                     AS medic_games_played,
-              SUM(r.role_name = 'Assassin')                  AS assassin_games_played,
+              COUNT(*) FILTER (WHERE r.role_name = 'Spy')    AS spy_games_played,
+              COUNT(*) FILTER (WHERE r.role_name = 'Medic')  AS medic_games_played,
+              COUNT(*) FILTER (WHERE r.role_name = 'Assassin') AS assassin_games_played,
 
               -- team breakdown
-              SUM(t.name = 'Mafia')                          AS mafia_games,
-              SUM(t.name = 'Innocent')                       AS innocent_games,
+              COUNT(*) FILTER (WHERE t.name = 'Mafia')       AS mafia_games,
+              COUNT(*) FILTER (WHERE t.name = 'Innocent')    AS innocent_games,
 
               -- team win rates
               ROUND(
-                SUM((t.name = 'Mafia') AND g.winning_team = gp.team_id)
-                / NULLIF(SUM(t.name = 'Mafia'), 0)
+                COUNT(*) FILTER (WHERE t.name = 'Mafia' AND g.winning_team = gp.team_id)::numeric
+                / NULLIF(COUNT(*) FILTER (WHERE t.name = 'Mafia'), 0)
               , 2)                                            AS mafia_win_rate,
               ROUND(
-                SUM((t.name = 'Innocent') AND g.winning_team = gp.team_id)
-                / NULLIF(SUM(t.name = 'Innocent'), 0)
+                COUNT(*) FILTER (WHERE t.name = 'Innocent' AND g.winning_team = gp.team_id)::numeric
+                / NULLIF(COUNT(*) FILTER (WHERE t.name = 'Innocent'), 0)
               , 2)                                            AS innocent_win_rate,
 
               -- detailed rates
               CASE
                 WHEN SUM(gp.spy_check_opportunities) > 0
                 THEN ROUND(
-                       SUM(gp.successful_spy_checks)
+                       SUM(gp.successful_spy_checks)::numeric
                        / SUM(gp.spy_check_opportunities)
                      , 2)
               END                                             AS spy_check_rate,
               CASE
                 WHEN SUM(gp.medic_save_opportunities) > 0
                 THEN ROUND(
-                       SUM(gp.medic_self_saves)
+                       SUM(gp.medic_self_saves)::numeric
                        / SUM(gp.medic_save_opportunities)
                      , 2)
               END                                             AS medic_self_save_rate,
               CASE
                 WHEN SUM(gp.medic_save_opportunities) > 0
                 THEN ROUND(
-                       SUM(gp.successful_medic_saves)
+                       SUM(gp.successful_medic_saves)::numeric
                        / SUM(gp.medic_save_opportunities)
                      , 2)
               END                                             AS successful_medic_save_rate,
               CASE
                 WHEN SUM(gp.assassin_shot_attempts) > 0
                 THEN ROUND(
-                       SUM(gp.successful_assassin_shots)
+                       SUM(gp.successful_assassin_shots)::numeric
                        / SUM(gp.assassin_shot_attempts)
                      , 2)
               END                                             AS successful_assassin_shot_rate
@@ -191,7 +191,7 @@ class QueryService(Database):
             JOIN roles r             ON gp.role_id    = r.role_id
 
             WHERE p.player_id = :player_id
-              AND g.approved = 1
+              AND g.approved = TRUE
 
             GROUP BY p.player_id, p.name
         """)
@@ -215,15 +215,15 @@ class QueryService(Database):
         sql = text("""
             SELECT
               ROUND(
-                SUM(t.name = 'Mafia') / COUNT(*)
+                COUNT(*) FILTER (WHERE t.name = 'Mafia')::numeric / NULLIF(COUNT(*), 0)
               , 2) AS mafia_win_rate,
               ROUND(
-                SUM(t.name = 'Innocent') / COUNT(*)
+                COUNT(*) FILTER (WHERE t.name = 'Innocent')::numeric / NULLIF(COUNT(*), 0)
               , 2) AS innocent_win_rate
             FROM games g
             JOIN teams t
               ON g.winning_team = t.team_id
-            WHERE g.approved = 1
+            WHERE g.approved = TRUE
         """)
 
         with self.Session() as session:
@@ -248,28 +248,28 @@ class QueryService(Database):
                 gp.player_id,
                 CASE
                   WHEN SUM(gp.spy_check_opportunities) > 0
-                  THEN SUM(gp.successful_spy_checks)
+                  THEN SUM(gp.successful_spy_checks)::numeric
                        / SUM(gp.spy_check_opportunities)
                 END AS spy,
                 CASE
                   WHEN SUM(gp.medic_save_opportunities) > 0
-                  THEN SUM(gp.medic_self_saves)
+                  THEN SUM(gp.medic_self_saves)::numeric
                        / SUM(gp.medic_save_opportunities)
                 END AS medic_self,
                 CASE
                   WHEN SUM(gp.medic_save_opportunities) > 0
-                  THEN SUM(gp.successful_medic_saves)
+                  THEN SUM(gp.successful_medic_saves)::numeric
                        / SUM(gp.medic_save_opportunities)
                 END AS medic_success,
                 CASE
                   WHEN SUM(gp.assassin_shot_attempts) > 0
-                  THEN SUM(gp.successful_assassin_shots)
+                  THEN SUM(gp.successful_assassin_shots)::numeric
                        / SUM(gp.assassin_shot_attempts)
                 END AS assassin
               FROM game_participants gp
               JOIN games g
                 ON gp.game_id = g.game_id
-              WHERE g.approved = 1
+              WHERE g.approved = TRUE
               GROUP BY gp.player_id
             )
             SELECT

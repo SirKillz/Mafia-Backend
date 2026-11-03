@@ -1,6 +1,8 @@
+name: mafia-backend
+
 services:
-  api:
-    container_name: fastapi-server
+  mafia-backend-api:
+    container_name: mafia-backend-api
     build:
       context: "../"
       dockerfile: "./docker/Dockerfile.dev"
@@ -13,23 +15,31 @@ services:
     
     volumes:
       - "../src/mafia_backend:/app/mafia_backend"
+    depends_on:
+      mafia-db:
+        condition: service_healthy
 
-  db:
-    container_name: database
-    build:
-      context: "../"
-      dockerfile: "./docker/Dockerfile.sql"
-
-    env_file: 
-      - "../.env.dev"
+  mafia-db:
+    container_name: mafia-db
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      PGUSER: ${DATABASE_USERNAME}
+      PGDATABASE: ${DATABASE_NAME}
 
     ports:
-      - "3306:3306"
+      - "5432:5432"
     
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
-  mysql_data:
-    name: mysql_data
-  
+  postgres_data:

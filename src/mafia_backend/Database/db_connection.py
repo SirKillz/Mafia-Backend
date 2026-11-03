@@ -7,21 +7,18 @@ class Database:
         user = os.getenv("DATABASE_USERNAME")
         password = os.getenv("DATABASE_PASSWORD")
         host = os.getenv("DATABASE_HOST")
-        port = int(os.getenv("DATABASE_PORT", "3306"))
+        port = int(os.getenv("DATABASE_PORT", "5432"))
         name = os.getenv("DATABASE_NAME")
-
-        # don't override host for prod
-        if os.getenv("ENV") == "test":
-            host = "localhost"
+        sslmode = os.getenv("DATABASE_SSLMODE")
 
         self.url = URL.create(
-            "mysql+pymysql",
+            "postgresql+psycopg",
             username=user,
             password=password,  # raw password; URL.create escapes it correctly
             host=host,
             port=port,
             database=name,
-            query={"charset": "utf8mb4"},
+            query={"sslmode": sslmode} if sslmode else {},
         )
 
     def get_engine(self):

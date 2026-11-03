@@ -4,5 +4,5 @@ mangum
 uvicorn
 python-dotenv
 SQLAlchemy
-pymysql
+psycopg[binary]
 cryptography
