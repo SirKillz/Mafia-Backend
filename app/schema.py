@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 
@@ -6,6 +8,20 @@ class ReadPlayer(BaseModel):
 
     player_id: int
     name: str | None = None
+
+class GameRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    game_id: int
+    played_at: datetime
+    approved: bool
+    winning_team: int
+    player_count: int
+    mafia_count: int
+    mafia_kill_power: int
+    day_count: int
+    night_count: int
+
 
 class PlayerSchema(BaseModel):
     name: str

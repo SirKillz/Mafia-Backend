@@ -1,29 +1,62 @@
 import logging
+from datetime import datetime
 
 from fastapi import APIRouter, Depends
 
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.Database.session_factory import get_db
+from app.Database.models import Team, Game
+
 from app.Auth.api_key import get_api_key
-from app.schema import GamePayload, PlayerSchema
-from app.Database.query_service import QueryService
+from app.schema import GamePayload, GameRead
+
 
 create_results_router = APIRouter(prefix="/v1/mafia/results")
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py
 
-@create_results_router.post("/create")
-async def create_results(payload: GamePayload, api_key: dict = Depends(get_api_key)):
+def get_team_id_by_name(db: Session, team_name: str) -> int:
+    """
+    Attempts to find a team by name wihtin the database
+    """
+
+    stmt = select(Team).where(Team.name == team_name)
+    team = db.execute(stmt).scalars().first()
+
+    if team is None:
+        raise ValueError(f"No team found with name {team_name}")
+
+    return team.team_id
+
+@create_results_router.post("/create", response_model=GameRead)
+async def create_results(
+    payload: GamePayload, 
+    api_key: dict = Depends(get_api_key),
+    db: Session = Depends(get_db)
+):
+    
+    
     logger.info(f"[{api_key['api_key']}] -  Received Request at /v1/mafia/game/create")
 
-    # Create the game instance in the database
-    query_service = QueryService()
-    game_id = query_service.create_game(payload)
+    # Derived Values
+    played_at = datetime.now()
+    player_count = len(payload.players)
+    mafia_count = len([p for p in payload.players if p.isMafia])
+    winning_team_id = get_team_id_by_name(db, payload.winningTeam)
 
-    # Create the game participants
-    query_service.create_game_participants(game_id, payload.players)
+    game = Game(
+        played_at = played_at,
+        approved = False,
+        winning_team = winning_team_id,
+        player_count = player_count,
+        mafia_count = mafia_count,
+        mafia_kill_power = payload.initialMafiaKillPower,
+        day_count = payload.dayCount,
+        night_count = payload.nightCount
+    )
+    db.add(game)
+    db.commit()
+    db.refresh(game)
 
-
-
-
-    return {
-        "message": "Successfully create game",
-        "game_id": game_id
-    }
+    return game
