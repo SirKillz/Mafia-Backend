@@ -17,3 +17,5 @@ The Compose project is named `mafia-backend`, with services `mafia-backend-api` 
 The backend reads `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT`, and `DATABASE_NAME`. `DATABASE_PORT` defaults to `5432`. Set optional `DATABASE_SSLMODE=require` when the production Postgres service requires TLS. For a migrated production database, point these variables at the existing Postgres instance. The production schema must have the tables and identity sequences expected by the SQLAlchemy models; the local init script is only for fresh local volumes.
 
 Keep `API_KEY` and `ALLOWED_CORS` set for the API. The old `MYSQL_*` variables are no longer used. `.env.dev` and `.env.prod` are ignored by Git, so update the deployed production environment separately.
+
+Hosted on Neon Postgres
