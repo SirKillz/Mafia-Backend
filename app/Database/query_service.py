@@ -6,7 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 from .db_connection import Database
-from .db_models import *
+from .models import *
 
 from app.schema import PlayerSchema
 from app.schema import GamePayload
