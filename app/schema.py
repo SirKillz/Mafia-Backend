@@ -1,5 +1,11 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
+class ReadPlayer(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    player_id: int
+    name: str | None = None
 
 class PlayerSchema(BaseModel):
     name: str
