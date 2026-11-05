@@ -2,9 +2,9 @@ import logging
 
 from fastapi import APIRouter, Depends
 
-from mafia_backend.Auth.api_key import get_api_key
-from mafia_backend.payload_models import GamePayload, PlayerSchema
-from mafia_backend.Database.query_service import QueryService
+from app.Auth.api_key import get_api_key
+from app.schema import GamePayload, PlayerSchema
+from app.Database.query_service import QueryService
 
 create_results_router = APIRouter(prefix="/v1/mafia/results")
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py

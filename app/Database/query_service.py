@@ -8,8 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from .db_connection import Database
 from .db_models import *
 
-from mafia_backend.payload_models import PlayerSchema
-from mafia_backend.payload_models import GamePayload
+from app.schema import PlayerSchema
+from app.schema import GamePayload
 
 class QueryService(Database):
     def __init__(self):

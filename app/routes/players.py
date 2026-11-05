@@ -4,9 +4,9 @@ from typing import List
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-from mafia_backend.Auth.api_key import get_api_key
-from mafia_backend.response_models import PlayerSchema
-from mafia_backend.Database.query_service import QueryService
+from app.Auth.api_key import get_api_key
+from app.response_models import PlayerSchema
+from app.Database.query_service import QueryService
 
 players_router = APIRouter(prefix="/v1/mafia")
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py

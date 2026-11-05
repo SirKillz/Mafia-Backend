@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from mafia_backend.routes import *
+from app.routes import *
 
 # Configure the root Logger
 logger = logging.getLogger("mafia_logger")
