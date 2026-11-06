@@ -15,7 +15,7 @@ average_stats_router = APIRouter(prefix="/v1/mafia")
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py
 
 @average_stats_router.get("/players/stats/average", response_model=AverageStatsSchema)
-async def get_players(
+async def get_average_player_stats(
     api_key: dict = Depends(get_api_key),
     db: Session = Depends(get_db)
 ):
