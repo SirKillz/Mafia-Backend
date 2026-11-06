@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.Auth.api_key import get_api_key
 from app.Database.session_factory import get_db
-from app.response_models import PlayerStatsSchema, GameStatsSchema, AverageStatsSchema
+from app.schema import PlayerStatsSchema, GameStatsSchema, AverageStatsSchema
 
 
 stats_router = APIRouter(prefix="/api/v1/stats", tags=["Stats"])

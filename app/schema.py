@@ -23,6 +23,32 @@ class GameRead(BaseModel):
     night_count: int
 
 
+class PlayerStatsSchema(BaseModel):
+    player_id: int
+    player_name: str
+    games_played: int
+    mafia_games: int
+    innocent_games: int
+    mafia_win_rate: float | None
+    innocent_win_rate: float | None
+    spy_check_rate: float | None
+    medic_self_save_rate: float | None
+    successful_medic_save_rate: float | None
+    successful_assassin_shot_rate: float | None
+
+
+class GameStatsSchema(BaseModel):
+    mafia_win_rate: float | None
+    innocent_win_rate: float | None
+
+
+class AverageStatsSchema(BaseModel):
+    avg_spy_check_rate: float | None
+    avg_medic_self_save_rate: float | None
+    avg_successful_medic_save_rate: float | None
+    avg_successful_assassin_shot_rate: float | None
+
+
 class PlayerSchema(BaseModel):
     name: str
     id: str
