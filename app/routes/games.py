@@ -13,7 +13,7 @@ from app.Auth.api_key import get_api_key
 from app.schema import GamePayload, GameRead, PlayerSchema
 
 
-create_results_router = APIRouter(prefix="/v1/mafia/results")
+games_router = APIRouter(prefix="/api/v1/games", tags=["Games"])
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py
 
 def get_team_id_by_name(db: Session, team_name: str) -> int:
@@ -128,7 +128,7 @@ def create_game_participants(db: Session, game_id: int, game_players: list[Playe
 
     return game_participants
 
-@create_results_router.post("/create", response_model=GameRead)
+@games_router.post("", response_model=GameRead)
 async def create_results(
     payload: GamePayload, 
     api_key: dict = Depends(get_api_key),

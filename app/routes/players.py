@@ -12,7 +12,7 @@ from app.schema import ReadPlayer
 
 from app.Database.models import Player
 
-players_router = APIRouter(prefix="/v1/mafia")
+players_router = APIRouter(prefix="/api/v1", tags=["Players"])
 logger = logging.getLogger("app_logger") # Configure inside src/app/__main__.py
 
 @players_router.get("/players", response_model=list[ReadPlayer])
