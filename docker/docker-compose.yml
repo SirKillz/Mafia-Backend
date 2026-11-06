@@ -14,7 +14,7 @@ services:
       - "8000:8000"
     
     volumes:
-      - "../src/mafia_backend:/app/mafia_backend"
+      - "../:/app"
     depends_on:
       mafia-db:
         condition: service_healthy

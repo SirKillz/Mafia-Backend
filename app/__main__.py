@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from mafia_backend.routes import *
+from app.routes import *
 
 # Configure the root Logger
 logger = logging.getLogger("mafia_logger")
@@ -34,11 +34,9 @@ app.add_middleware(
 )
 
 app.include_router(test_router)
-app.include_router(create_results_router)
+app.include_router(games_router)
 app.include_router(players_router)
-app.include_router(player_stats_router)
-app.include_router(game_stats_router)
-app.include_router(average_stats_router)
+app.include_router(stats_router)
 
 logger.info(f"DB host: {os.getenv('DATABASE_HOST')}")
 logger.info(f"ENV: {os.getenv('ENV')}")
