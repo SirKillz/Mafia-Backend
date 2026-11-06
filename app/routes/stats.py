@@ -62,7 +62,7 @@ async def get_average_player_stats(
             FROM player_rates;
         """)
 
-    result = db.execute(sql).fetchone()
+    result = db.execute(sql).mappings().one_or_none()
 
     if result is None:
         return AverageStatsSchema(
@@ -185,7 +185,7 @@ async def get_team_stats(
         WHERE g.approved = TRUE
     """)
 
-    result = db.execute(sql).fetchone()
+    result = db.execute(sql).mappings().one_or_none()
 
     if result is None:
         return GameStatsSchema(mafia_win_rate=None, innocent_win_rate=None)
